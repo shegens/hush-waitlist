@@ -48,7 +48,7 @@ export default function WaitlistPage() {
       <main style={s.main}>
         <div style={s.wordmark}>hush</div>
         <p style={s.tagline}>All signal. No noise.</p>
-        <button style={s.btn} onClick={openModal}>join the waitlist</button>
+        <button style={s.btn} onClick={() => openModal()}>join the waitlist</button>
       </main>
     );
   }
