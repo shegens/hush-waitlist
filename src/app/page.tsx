@@ -6,6 +6,15 @@ import { upsertWaitlist } from "@/lib/waitlist";
 
 type Stage = "idle" | "waitlisted" | "done";
 
+function AccountButton({ address, onClick }: { address: string | null; onClick: () => void }) {
+  const label = address ? `${address.slice(0, 4)}…${address.slice(-2)}` : "●";
+  return (
+    <button style={s.avatar} onClick={onClick} title="Account">
+      <span style={s.avatarText}>{label}</span>
+    </button>
+  );
+}
+
 export default function WaitlistPage() {
   const { openModal } = useModal();
   const { isConnected, embedded } = useAccount();
@@ -45,6 +54,7 @@ export default function WaitlistPage() {
   if (!isConnected || !address) {
     return (
       <main style={s.main}>
+        <AccountButton address={null} onClick={() => openModal()} />
         <div style={s.wordmark}>hush</div>
         <p style={s.tagline}>All signal. No noise.</p>
         {error && <p style={s.error}>{error}</p>}
@@ -58,6 +68,7 @@ export default function WaitlistPage() {
     const remaining = 999 - notes.length;
     return (
       <main style={s.main}>
+        <AccountButton address={address} onClick={() => openModal()} />
         <div style={s.wordmark}>hush</div>
         <p style={s.confirmation}>
           You're on the waitlist. You may provide additional info for waitlist review if you wish.
@@ -94,6 +105,7 @@ export default function WaitlistPage() {
   // ── done
   return (
     <main style={s.main}>
+      <AccountButton address={address} onClick={() => openModal()} />
       <div style={s.wordmark}>hush</div>
       <p style={s.confirmation}>
         You're on the waitlist. We'll be in touch when it's your turn to speak.
@@ -113,6 +125,29 @@ const s: Record<string, React.CSSProperties> = {
     padding: "2rem 1.5rem",
     gap: "1.25rem",
     background: "#FDF6EE",
+    position: "relative",
+  },
+  avatar: {
+    position: "absolute",
+    top: "1.25rem",
+    right: "1.25rem",
+    width: 36,
+    height: 36,
+    borderRadius: "50%",
+    background: "#F7EDE2",
+    border: "1.5px solid #F9C49A",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 0,
+    transition: "border-color 0.2s",
+  },
+  avatarText: {
+    fontFamily: "monospace",
+    fontSize: "0.55rem",
+    color: "#5C2E0E",
+    letterSpacing: "-0.02em",
   },
   wordmark: {
     fontSize: "2.5rem",
@@ -193,26 +228,6 @@ const s: Record<string, React.CSSProperties> = {
     color: "#D96B10",
     fontSize: "0.75rem",
     fontFamily: "system-ui",
-  },
-  footer: {
-    position: "fixed" as const,
-    bottom: "1.5rem",
-    fontSize: "0.65rem",
-    fontFamily: "system-ui",
-    letterSpacing: "0.08em",
-    textTransform: "uppercase" as const,
-    color: "#F9C49A",
-  },
-  bars: {
-    display: "flex",
-    alignItems: "flex-end",
-    gap: 3,
-  },
-  bar: {
-    width: 4,
-    borderRadius: 2,
-    background: "#D96B10",
-    opacity: 0.4,
   },
   address: {
     fontFamily: "monospace",
