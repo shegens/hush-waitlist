@@ -39,6 +39,7 @@ export function ParaProvider({ children }: { children: ReactNode }) {
           },
           externalWalletConfig: {
             wallets: ["WALLETCONNECT", "RABBY", "RAINBOW", "ZERION"],
+            walletConnectProjectId: "a9c851c2e8e6756d171c8d2440d7a6d6",
           },
         }}
         externalWalletConfig={{}}
