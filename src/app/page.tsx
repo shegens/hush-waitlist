@@ -4,7 +4,7 @@ import { useModal, useAccount } from "@getpara/react-sdk";
 import { useState, useEffect } from "react";
 import { upsertWaitlist } from "@/lib/waitlist";
 
-type Stage = "idle" | "waitlisted" | "form" | "done";
+type Stage = "idle" | "waitlisted" | "done";
 
 export default function WaitlistPage() {
   const { openModal } = useModal();
@@ -53,27 +53,15 @@ export default function WaitlistPage() {
     );
   }
 
-  // ── just connected, offer form
+  // ── waitlisted: show optional form inline
   if (stage === "waitlisted") {
+    const remaining = 999 - notes.length;
     return (
       <main style={s.main}>
         <div style={s.wordmark}>hush</div>
         <p style={s.confirmation}>
           You're on the waitlist. You may provide additional info for waitlist review if you wish.
         </p>
-        <span style={s.address}>{address.slice(0, 6)}…{address.slice(-4)}</span>
-        <button style={s.btn} onClick={() => setStage("form")}>add info</button>
-        <button style={s.ghost} onClick={() => setStage("done")}>skip</button>
-      </main>
-    );
-  }
-
-  // ── form
-  if (stage === "form") {
-    const remaining = 999 - notes.length;
-    return (
-      <main style={s.main}>
-        <div style={s.wordmark}>hush</div>
         <div style={s.form}>
           <input
             style={s.input}
@@ -107,11 +95,6 @@ export default function WaitlistPage() {
   return (
     <main style={s.main}>
       <div style={s.wordmark}>hush</div>
-      <div style={s.bars}>
-        {[6, 10, 15, 20].map((h, i) => (
-          <div key={i} style={{ ...s.bar, height: h }} />
-        ))}
-      </div>
       <p style={s.confirmation}>
         You're on the waitlist. We'll be in touch when it's your turn to speak.
       </p>
