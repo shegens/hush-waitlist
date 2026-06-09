@@ -3,13 +3,14 @@
 import "./globals.css";
 import { useModal, useAccount } from "@getpara/react-sdk";
 import { useState, useEffect } from "react";
-import { upsertWaitlist, getWaitlistEntry } from "@/lib/waitlist";
+import { upsertWaitlist } from "@/lib/waitlist";
 
 type Stage = "idle" | "waitlisted" | "form" | "done";
 
 export default function WaitlistPage() {
   const { openModal } = useModal();
-  const { isConnected, address } = useAccount();
+  const { isConnected, embedded } = useAccount();
+  const address = embedded?.wallets?.[0]?.address ?? null;
 
   const [stage, setStage] = useState<Stage>("idle");
   const [name, setName] = useState("");
