@@ -46,6 +46,7 @@ export function ParaProvider({ children }: { children: ReactNode }) {
         paraModalConfig={{
           recoverySecretStepEnabled: true,
           onRampTestMode: true,
+          hideWallets: true,
         }}
       >
         {children}
