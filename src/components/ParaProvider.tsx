@@ -16,19 +16,35 @@ export function ParaProvider({ children }: { children: ReactNode }) {
       <ParaSDKProvider
         paraClientConfig={{ apiKey: API_KEY, env: ENV }}
         config={{ appName: "Hush" }}
-        paraModalConfig={{
-          logo: "/hush-og.png",
-          disablePhoneLogin: true,
-          authLayout: ["AUTH:FULL", "EXTERNAL:FULL"],
-          oAuthMethods: ["APPLE", "GOOGLE"],
-          recoverySecretStepEnabled: true,
-          theme: {
-            foregroundColor: "#221206",
-            backgroundColor: "#FDF6EE",
-            accentColor: "#D96B10",
-            mode: "light",
-            borderRadius: "sm",
+        configOverrides={{
+          themeConfig: {
+            borderRadius: "md",
+            foregroundMixRatio: 0.08,
+            backgroundColor: "#fdf6ee",
+            foregroundColor: "#d96c11",
+            font: "Source Serif Pro",
           },
+          authConfig: {
+            oAuthMethods: [],
+            disableEmailLogin: false,
+            disablePhoneLogin: true,
+            isGuestModeEnabled: false,
+            twoFactorAuthEnabled: false,
+          },
+          modalConfig: {
+            disableAddFundsPrompt: true,
+            authLayout: ["EXTERNAL:CONDENSED", "AUTH:FULL"],
+            hideWallets: true,
+            logo: "https://raw.githubusercontent.com/shegens/hush/refs/heads/main/docs/hush-og.png",
+          },
+          externalWalletConfig: {
+            wallets: ["WALLETCONNECT", "RABBY", "RAINBOW", "ZERION"],
+          },
+        }}
+        externalWalletConfig={{}}
+        paraModalConfig={{
+          recoverySecretStepEnabled: true,
+          onRampTestMode: true,
         }}
       >
         {children}
