@@ -5,14 +5,16 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "postinstall": "node node_modules/@getpara/react-sdk/setup.js || true"
+    "postinstall": "echo 'skip'"
   },
   "dependencies": {
     "next": "^14",
     "react": "^18",
     "react-dom": "^18",
     "@getpara/react-sdk": "latest",
-    "@tanstack/react-query": "^5.0.0"
+    "@tanstack/react-query": "^5.0.0",
+    "viem": "^2.27.0",
+    "wagmi": "^2.15.0"
   },
   "devDependencies": {
     "typescript": "^5",
