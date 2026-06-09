@@ -5,7 +5,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "postinstall": "npx setup-para"
+    "postinstall": "node node_modules/@getpara/react-sdk/setup.js || true"
   },
   "dependencies": {
     "next": "^14",
