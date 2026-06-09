@@ -37,29 +37,13 @@
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
 
-    // wordmark
+    // wordmark only
     ctx.fillStyle = '#D96B10';
-    ctx.font = 'italic 180px Georgia, serif';
+    ctx.font = 'italic 220px Georgia, serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.letterSpacing = '6px';
-    ctx.fillText('hush', W/2, H/2 - 30);
-
-    // tagline
-    ctx.fillStyle = '#8C5828';
-    ctx.font = 'normal 28px Georgia, serif';
-    ctx.letterSpacing = '3px';
-    ctx.fillText('All signal. No noise.', W/2, H/2 + 80);
-
-    // decibel bars
-    const bx = W/2 - 18, by = H/2 + 140;
-    const bars = [[0,14,6,6],[10,10,6,10],[20,5,6,15],[30,0,6,20]];
-    ctx.fillStyle = 'rgba(217,107,16,0.35)';
-    bars.forEach(([x,y,w,h]) => {
-      ctx.beginPath();
-      ctx.roundRect(bx+x, by+y, w, h, 2);
-      ctx.fill();
-    });
+    ctx.letterSpacing = '8px';
+    ctx.fillText('hush', W/2, H/2);
   }
 
   function drawFavicon(canvas) {
