@@ -68,7 +68,7 @@ export default function WaitlistPage() {
     }
   }
 
-  // ── not connected (or connect failed)
+  // ── not connected
   if (!isConnected || !address) {
     return (
       <main style={s.main}>
@@ -81,8 +81,8 @@ export default function WaitlistPage() {
     );
   }
 
-  // ── waitlisted: show optional form inline
-  if (stage === "waitlisted") {
+  // ── waitlisted (or idle+connected, waiting for upsert): show optional form inline
+  if (stage === "idle" || stage === "waitlisted") {
     const remaining = 999 - notes.length;
     return (
       <main style={s.main}>
