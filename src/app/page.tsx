@@ -2,43 +2,125 @@
 
 import "./globals.css";
 import { useModal, useAccount } from "@getpara/react-sdk";
+import { useState, useEffect } from "react";
+import { upsertWaitlist, getWaitlistEntry } from "@/lib/waitlist";
+
+type Stage = "idle" | "waitlisted" | "form" | "done";
 
 export default function WaitlistPage() {
   const { openModal } = useModal();
   const { isConnected, address } = useAccount();
 
-  if (isConnected && address) {
+  const [stage, setStage] = useState<Stage>("idle");
+  const [name, setName] = useState("");
+  const [notes, setNotes] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  // On connect: auto-register to waitlist
+  useEffect(() => {
+    if (!isConnected || !address) return;
+    if (stage !== "idle") return;
+
+    upsertWaitlist({ address })
+      .then(() => setStage("waitlisted"))
+      .catch(() => setStage("waitlisted")); // still show confirmation on error
+  }, [isConnected, address]);
+
+  async function submitInfo() {
+    if (!address) return;
+    setSaving(true);
+    setError("");
+    try {
+      await upsertWaitlist({ address, name, notes });
+      setStage("done");
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  // ── not connected
+  if (!isConnected || !address) {
     return (
-      <main style={styles.main}>
-        <div style={styles.wordmark}>hush</div>
-        <div style={styles.bars}>
-          {[6, 10, 15, 20].map((h, i) => (
-            <div key={i} style={{ ...styles.bar, height: h }} />
-          ))}
-        </div>
-        <p style={styles.confirmation}>
-          You're on the list. We'll be in touch when it's your turn to speak.
-        </p>
-        <span style={styles.address}>
-          {address.slice(0, 6)}…{address.slice(-4)}
-        </span>
+      <main style={s.main}>
+        <div style={s.wordmark}>hush</div>
+        <p style={s.tagline}>All signal. No noise.</p>
+        <button style={s.btn} onClick={openModal}>join the waitlist</button>
+        <div style={s.footer}>coming soon</div>
       </main>
     );
   }
 
+  // ── just connected, offer form
+  if (stage === "waitlisted") {
+    return (
+      <main style={s.main}>
+        <div style={s.wordmark}>hush</div>
+        <p style={s.confirmation}>
+          You're on the waitlist. You may provide additional info for waitlist review if you wish.
+        </p>
+        <span style={s.address}>{address.slice(0, 6)}…{address.slice(-4)}</span>
+        <button style={s.btn} onClick={() => setStage("form")}>add info</button>
+        <button style={s.ghost} onClick={() => setStage("done")}>skip</button>
+      </main>
+    );
+  }
+
+  // ── form
+  if (stage === "form") {
+    const remaining = 999 - notes.length;
+    return (
+      <main style={s.main}>
+        <div style={s.wordmark}>hush</div>
+        <div style={s.form}>
+          <input
+            style={s.input}
+            type="text"
+            placeholder="name"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            maxLength={120}
+          />
+          <div style={{ position: "relative", width: "100%" }}>
+            <textarea
+              style={{ ...s.input, ...s.textarea }}
+              placeholder="notes"
+              value={notes}
+              onChange={e => setNotes(e.target.value)}
+              maxLength={999}
+            />
+            <span style={s.charCount}>{remaining}</span>
+          </div>
+          {error && <p style={s.error}>{error}</p>}
+          <button style={s.btn} onClick={submitInfo} disabled={saving}>
+            {saving ? "saving…" : "submit"}
+          </button>
+          <button style={s.ghost} onClick={() => setStage("done")}>skip</button>
+        </div>
+      </main>
+    );
+  }
+
+  // ── done
   return (
-    <main style={styles.main}>
-      <div style={styles.wordmark}>hush</div>
-      <p style={styles.tagline}>All signal. No noise.</p>
-      <button style={styles.btn} onClick={openModal}>
-        join the waitlist
-      </button>
-      <div style={styles.footer}>coming soon</div>
+    <main style={s.main}>
+      <div style={s.wordmark}>hush</div>
+      <div style={s.bars}>
+        {[6, 10, 15, 20].map((h, i) => (
+          <div key={i} style={{ ...s.bar, height: h }} />
+        ))}
+      </div>
+      <p style={s.confirmation}>
+        You're on the waitlist. We'll be in touch when it's your turn to speak.
+      </p>
+      <span style={s.address}>{address.slice(0, 6)}…{address.slice(-4)}</span>
     </main>
   );
 }
 
-const styles: Record<string, React.CSSProperties> = {
+const s: Record<string, React.CSSProperties> = {
   main: {
     minHeight: "100vh",
     display: "flex",
@@ -62,6 +144,14 @@ const styles: Record<string, React.CSSProperties> = {
     textAlign: "center",
     maxWidth: 320,
   },
+  confirmation: {
+    fontSize: "0.9rem",
+    color: "#8C5828",
+    textAlign: "center",
+    maxWidth: 300,
+    lineHeight: 1.65,
+    fontFamily: "Georgia, serif",
+  },
   btn: {
     background: "#D96B10",
     color: "#fff",
@@ -73,6 +163,53 @@ const styles: Record<string, React.CSSProperties> = {
     letterSpacing: "0.04em",
     cursor: "pointer",
     boxShadow: "0 2px 16px rgba(217,107,16,0.18)",
+  },
+  ghost: {
+    background: "none",
+    border: "none",
+    color: "#8C5828",
+    fontFamily: "system-ui",
+    fontSize: "0.78rem",
+    cursor: "pointer",
+    opacity: 0.7,
+  },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: "0.85rem",
+    width: "100%",
+    maxWidth: 340,
+  },
+  input: {
+    width: "100%",
+    background: "#F7EDE2",
+    border: "1px solid #F9C49A",
+    borderRadius: 10,
+    padding: "0.75rem 1rem",
+    fontFamily: "Georgia, serif",
+    fontSize: "0.9rem",
+    color: "#221206",
+    outline: "none",
+  },
+  textarea: {
+    minHeight: 120,
+    resize: "none" as const,
+    paddingBottom: "1.5rem",
+  },
+  charCount: {
+    position: "absolute",
+    bottom: "0.5rem",
+    right: "0.75rem",
+    fontSize: "0.65rem",
+    fontFamily: "system-ui",
+    color: "#8C5828",
+    opacity: 0.6,
+  },
+  error: {
+    color: "#D96B10",
+    fontSize: "0.75rem",
+    fontFamily: "system-ui",
   },
   footer: {
     position: "fixed" as const,
@@ -87,20 +224,12 @@ const styles: Record<string, React.CSSProperties> = {
     display: "flex",
     alignItems: "flex-end",
     gap: 3,
-    marginBottom: "0.25rem",
   },
   bar: {
     width: 4,
     borderRadius: 2,
     background: "#D96B10",
     opacity: 0.4,
-  },
-  confirmation: {
-    fontSize: "0.85rem",
-    color: "#8C5828",
-    textAlign: "center",
-    maxWidth: 280,
-    lineHeight: 1.6,
   },
   address: {
     fontFamily: "monospace",
