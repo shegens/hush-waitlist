@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
+const isGitHubPages = process.env.GITHUB_ACTIONS === "true";
 const nextConfig = {
   output: "export",
+  basePath: isGitHubPages ? "/hush-waitlist" : "",
+  assetPrefix: isGitHubPages ? "/hush-waitlist/" : "",
   images: { unoptimized: true },
   webpack: (config) => {
     config.experiments = { ...config.experiments, asyncWebAssembly: true };

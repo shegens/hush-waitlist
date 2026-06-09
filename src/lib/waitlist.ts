@@ -37,6 +37,7 @@ export async function upsertWaitlist(entry: {
     name: entry.name?.trim() || null,
     notes: entry.notes?.trim() || null,
     score,
+    updated_at: new Date().toISOString(),
   };
 
   const res = await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {

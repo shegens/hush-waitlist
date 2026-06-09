@@ -1,6 +1,5 @@
 "use client";
 
-import "./globals.css";
 import { useModal, useAccount } from "@getpara/react-sdk";
 import { useState, useEffect } from "react";
 import { upsertWaitlist } from "@/lib/waitlist";
@@ -25,8 +24,8 @@ export default function WaitlistPage() {
 
     upsertWaitlist({ address })
       .then(() => setStage("waitlisted"))
-      .catch(() => setStage("waitlisted")); // still show confirmation on error
-  }, [isConnected, address]);
+      .catch(() => setError("Failed to join waitlist. Please refresh and try again."));
+  }, [isConnected, address, stage]);
 
   async function submitInfo() {
     if (!address) return;
@@ -42,12 +41,13 @@ export default function WaitlistPage() {
     }
   }
 
-  // ── not connected
+  // ── not connected (or connect failed)
   if (!isConnected || !address) {
     return (
       <main style={s.main}>
         <div style={s.wordmark}>hush</div>
         <p style={s.tagline}>All signal. No noise.</p>
+        {error && <p style={s.error}>{error}</p>}
         <button style={s.btn} onClick={() => openModal()}>join the waitlist</button>
       </main>
     );
