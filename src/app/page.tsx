@@ -4,7 +4,7 @@ import { useModal, useAccount, useLogout } from "@getpara/react-sdk";
 import { useState, useEffect } from "react";
 import { upsertWaitlist } from "@/lib/waitlist";
 
-type Stage = "idle" | "waitlisted" | "done";
+
 
 function AccountButton({ connected, onConnect, onDisconnect }: {
   connected: boolean;
@@ -32,27 +32,17 @@ export default function WaitlistPage() {
 
   function handleDisconnect() {
     logout();
-    setStage("idle");
+    setDone(false);
     setName("");
     setNotes("");
     setError("");
   }
 
-  const [stage, setStage] = useState<Stage>("idle");
+  const [done, setDone] = useState(false);
   const [name, setName] = useState("");
   const [notes, setNotes] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-
-  // On connect: auto-register to waitlist
-  useEffect(() => {
-    if (!isConnected || !address) return;
-    if (stage !== "idle") return;
-
-    upsertWaitlist({ address })
-      .then(() => setStage("waitlisted"))
-      .catch(() => setError("Failed to join waitlist. Please refresh and try again."));
-  }, [isConnected, address, stage]);
 
   async function submitInfo() {
     if (!address) return;
@@ -60,7 +50,7 @@ export default function WaitlistPage() {
     setError("");
     try {
       await upsertWaitlist({ address, name, notes });
-      setStage("done");
+      setDone(true);
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -81,8 +71,8 @@ export default function WaitlistPage() {
     );
   }
 
-  // ── waitlisted (or idle+connected, waiting for upsert): show optional form inline
-  if (stage === "idle" || stage === "waitlisted") {
+  // ── connected but hasn't submitted yet: show form
+  if (!done) {
     const remaining = 999 - notes.length;
     return (
       <main style={s.main}>
@@ -114,7 +104,7 @@ export default function WaitlistPage() {
           <button style={s.btn} onClick={submitInfo} disabled={saving}>
             {saving ? "saving…" : "submit"}
           </button>
-          <button style={s.ghost} onClick={() => setStage("done")}>skip</button>
+          <button style={s.ghost} onClick={() => { upsertWaitlist({ address }); setDone(true); }}>skip</button>
         </div>
       </main>
     );
