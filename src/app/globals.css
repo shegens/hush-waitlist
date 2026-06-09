@@ -19,29 +19,4 @@ html, body {
   font-family: Georgia, 'Times New Roman', serif;
 }
 
-/* Para modal text overrides — hide "Connect Wallet" and replace with "Connect Account" */
-[class*="para-modal"] [class*="title"],
-[class*="ParaModal"] [class*="title"] {
-  font-size: 0 !important;
-  line-height: 0 !important;
-}
-[class*="para-modal"] [class*="title"]::after,
-[class*="ParaModal"] [class*="title"]::after {
-  content: "Connect Account";
-  font-size: 1.25rem;
-  line-height: 1.4;
-}
 
-/* Add "Create Account" heading above auth section */
-[class*="para-modal"] [class*="auth-section"]::before,
-[class*="ParaModal"] [class*="auth-section"]::before,
-[class*="para-modal"] form::before,
-[class*="ParaModal"] form::before {
-  content: "Create Account";
-  display: block;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #221206;
-  margin-bottom: 0.5rem;
-  font-family: "Source Serif Pro", Georgia, serif;
-}

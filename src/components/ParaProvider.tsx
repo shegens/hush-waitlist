@@ -16,37 +16,26 @@ export function ParaProvider({ children }: { children: ReactNode }) {
       <ParaSDKProvider
         paraClientConfig={{ apiKey: API_KEY, env: ENV }}
         config={{ appName: "Hush" }}
-        configOverrides={{
-          themeConfig: {
-            borderRadius: "md",
-            foregroundMixRatio: 0.08,
-            backgroundColor: "#fdf6ee",
-            foregroundColor: "#d96c11",
-            font: "Source Serif Pro",
-          },
-          authConfig: {
-            oAuthMethods: [],
-            disableEmailLogin: false,
-            disablePhoneLogin: true,
-            isGuestModeEnabled: false,
-            twoFactorAuthEnabled: false,
-          },
-          modalConfig: {
-            disableAddFundsPrompt: true,
-            authLayout: ["EXTERNAL:CONDENSED", "AUTH:FULL"],
-            hideWallets: true,
-            logo: "https://raw.githubusercontent.com/shegens/hush/refs/heads/main/docs/hush-og.png",
-          },
-          externalWalletConfig: {
-            wallets: ["WALLETCONNECT", "RABBY", "RAINBOW", "ZERION"],
-            walletConnectProjectId: "a9c851c2e8e6756d171c8d2440d7a6d6",
-          },
-        }}
-        externalWalletConfig={{}}
         paraModalConfig={{
+          disableEmailLogin: false,
+          disablePhoneLogin: true,
+          authLayout: ["EXTERNAL:CONDENSED", "AUTH:FULL"],
+          oAuthMethods: [],
+          hideWallets: true,
           recoverySecretStepEnabled: true,
           onRampTestMode: true,
-          hideWallets: true,
+          logo: "https://raw.githubusercontent.com/shegens/hush/refs/heads/main/docs/hush-og.png",
+          theme: {
+            foregroundColor: "#d96c11",
+            backgroundColor: "#fdf6ee",
+            borderRadius: "md",
+            mode: "light",
+            font: "Source Serif Pro",
+          },
+        }}
+        externalWalletConfig={{
+          wallets: ["WALLETCONNECT", "RABBY", "RAINBOW", "ZERION"],
+          walletConnectProjectId: "a9c851c2e8e6756d171c8d2440d7a6d6",
         }}
       >
         {children}
