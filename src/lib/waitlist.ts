@@ -50,11 +50,4 @@ export async function upsertWaitlist(entry: {
   return row;
 }
 
-export async function getWaitlistEntry(address: string): Promise<WaitlistEntry | null> {
-  const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/waitlist?address=eq.${address.toLowerCase()}&select=*`,
-    { headers: headers() }
-  );
-  const rows = await res.json();
-  return rows[0] ?? null;
-}
+// No public reads — admin uses service key directly in Supabase dashboard

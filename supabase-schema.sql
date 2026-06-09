@@ -19,7 +19,11 @@ create view waitlist_ranked as
 -- Enable RLS
 alter table waitlist enable row level security;
 
--- Allow anyone to insert/update their own address
+-- Anyone can insert (to join the waitlist)
 create policy "insert own" on waitlist for insert with check (true);
+
+-- Anyone can update their own row (to add name/notes)
 create policy "update own" on waitlist for update using (true);
-create policy "select own" on waitlist for select using (true);
+
+-- No public reads — only service role (admin) can see the list
+-- The anon key gets nothing; use service key for admin queries
