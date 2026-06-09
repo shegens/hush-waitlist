@@ -14,6 +14,8 @@ const nextConfig = {
       "@getpara/solana-signers-v2-integration": false,
       "@getpara/cosmjs-v0-integration": false,
       "@farcaster/miniapp-sdk": false,
+      "@farcaster/miniapp-wagmi-connector": false,
+      "@farcaster/mini-app-solana": false,
       "ethers": false,
     };
 
