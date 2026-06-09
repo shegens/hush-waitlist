@@ -46,9 +46,13 @@ export async function upsertWaitlist(entry: {
     body: JSON.stringify(body),
   });
 
-  if (!res.ok) throw new Error(`Waitlist error: ${res.status}`);
-  const [row] = await res.json();
-  return row;
+  if (!res.ok) {
+    const text = await res.text();
+    console.error("Waitlist upsert failed:", res.status, text);
+    throw new Error(`Waitlist error: ${res.status}`);
+  }
+  const data = await res.json();
+  return data[0];
 }
 
 // No public reads — admin uses service key directly in Supabase dashboard
