@@ -1,0 +1,19 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream: #FDF6EE;
+  --wine: #D96B10;
+  --wine-light: #F08030;
+  --pink: #F46080;
+  --text: #221206;
+  --muted: #8C5828;
+  --handle: #5C2E0E;
+  --blush: #F9C49A;
+}
+
+html, body {
+  height: 100%;
+  background: var(--cream);
+  color: var(--text);
+  font-family: Georgia, 'Times New Roman', serif;
+}
