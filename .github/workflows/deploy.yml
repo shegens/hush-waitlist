@@ -30,6 +30,8 @@ jobs:
         env:
           NEXT_PUBLIC_PARA_ENVIRONMENT: BETA
           NEXT_PUBLIC_PARA_API_KEY: ${{ secrets.PARA_API_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: out/
