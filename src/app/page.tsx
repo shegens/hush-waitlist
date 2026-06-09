@@ -1,24 +1,42 @@
 "use client";
 
-import { useModal, useAccount } from "@getpara/react-sdk";
+import { useModal, useAccount, useLogout } from "@getpara/react-sdk";
 import { useState, useEffect } from "react";
 import { upsertWaitlist } from "@/lib/waitlist";
 
 type Stage = "idle" | "waitlisted" | "done";
 
-function AccountButton({ address, onClick }: { address: string | null; onClick: () => void }) {
-  const label = address ? `${address.slice(0, 4)}…${address.slice(-2)}` : "●";
+function AccountButton({ connected, onConnect, onDisconnect }: {
+  connected: boolean;
+  onConnect: () => void;
+  onDisconnect: () => void;
+}) {
   return (
-    <button style={s.avatar} onClick={onClick} title="Account">
-      <span style={s.avatarText}>{label}</span>
-    </button>
+    <button
+      style={{
+        ...s.avatar,
+        background: connected ? "#D96B10" : "#F7EDE2",
+        borderColor: connected ? "#D96B10" : "#F9C49A",
+      }}
+      onClick={connected ? onDisconnect : onConnect}
+      title={connected ? "Disconnect" : "Connect"}
+    />
   );
 }
 
 export default function WaitlistPage() {
   const { openModal } = useModal();
   const { isConnected, embedded } = useAccount();
+  const { logout } = useLogout();
   const address = embedded?.wallets?.[0]?.address ?? null;
+
+  function handleDisconnect() {
+    logout();
+    setStage("idle");
+    setName("");
+    setNotes("");
+    setError("");
+  }
 
   const [stage, setStage] = useState<Stage>("idle");
   const [name, setName] = useState("");
@@ -54,7 +72,7 @@ export default function WaitlistPage() {
   if (!isConnected || !address) {
     return (
       <main style={s.main}>
-        <AccountButton address={null} onClick={() => openModal()} />
+        <AccountButton connected={false} onConnect={() => openModal()} onDisconnect={handleDisconnect} />
         <div style={s.wordmark}>hush</div>
         <p style={s.tagline}>All signal. No noise.</p>
         {error && <p style={s.error}>{error}</p>}
@@ -68,7 +86,7 @@ export default function WaitlistPage() {
     const remaining = 999 - notes.length;
     return (
       <main style={s.main}>
-        <AccountButton address={address} onClick={() => openModal()} />
+        <AccountButton connected={true} onConnect={() => openModal()} onDisconnect={handleDisconnect} />
         <div style={s.wordmark}>hush</div>
         <p style={s.confirmation}>
           You're on the waitlist. You may provide additional info for waitlist review if you wish.
@@ -105,7 +123,7 @@ export default function WaitlistPage() {
   // ── done
   return (
     <main style={s.main}>
-      <AccountButton address={address} onClick={() => openModal()} />
+      <AccountButton connected={true} onConnect={() => openModal()} onDisconnect={handleDisconnect} />
       <div style={s.wordmark}>hush</div>
       <p style={s.confirmation}>
         You're on the waitlist. We'll be in touch when it's your turn to speak.
@@ -131,23 +149,13 @@ const s: Record<string, React.CSSProperties> = {
     position: "absolute",
     top: "1.25rem",
     right: "1.25rem",
-    width: 36,
-    height: 36,
+    width: 32,
+    height: 32,
     borderRadius: "50%",
-    background: "#F7EDE2",
-    border: "1.5px solid #F9C49A",
+    border: "1.5px solid",
     cursor: "pointer",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
     padding: 0,
-    transition: "border-color 0.2s",
-  },
-  avatarText: {
-    fontFamily: "monospace",
-    fontSize: "0.55rem",
-    color: "#5C2E0E",
-    letterSpacing: "-0.02em",
+    transition: "background 0.2s, border-color 0.2s",
   },
   wordmark: {
     fontSize: "2.5rem",
